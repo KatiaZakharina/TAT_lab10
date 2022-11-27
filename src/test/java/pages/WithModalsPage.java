@@ -1,6 +1,5 @@
 package pages;
 
-import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -8,37 +7,39 @@ import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
 public class WithModalsPage extends BasePage {
+    private static final int SCROLL_UNTIL_MODAL_OPENING = 500;
+
     String pageUrl;
 
     @FindBy(className = "recommendation-modal__container")
-    private WebElement recommendationModal;
+    private WebElement customerLocationModal;
 
     @FindBy(className = "recommendation-modal__close-button")
-    private WebElement recommendationModalClose;
+    private WebElement customerLocationModalClose;
 
     @FindBy(xpath ="//div[@data-testid='POPUP']")
-    private WebElement advertisementModal;
+    private WebElement discountOfferModal;
 
     public WithModalsPage(WebDriver driver, String pageUrl) {
         super(driver);
         this.pageUrl = pageUrl;
     }
+
     public WithModalsPage openPage() {
         webDriver.get(pageUrl);
-        wait.until(ExpectedConditions.presenceOfElementLocated(By.className("recommendation-modal__container")));
         closeModals();
 
         return this;
     }
 
     private void closeModals() {
-        wait.until(ExpectedConditions.visibilityOf(recommendationModal));
-        recommendationModalClose.click();
-        wait.until(ExpectedConditions.invisibilityOf(recommendationModal));
+        wait.until(ExpectedConditions.visibilityOf(customerLocationModal));
+        customerLocationModalClose.click();
+        wait.until(ExpectedConditions.invisibilityOf(customerLocationModal));
 
-        js.executeScript("window.scrollBy(0,500)", "");
-        wait.until(ExpectedConditions.visibilityOf(advertisementModal));
+        js.executeScript("window.scrollBy(0, arguments[0])", SCROLL_UNTIL_MODAL_OPENING);
+        wait.until(ExpectedConditions.visibilityOf(discountOfferModal));
         action.sendKeys(Keys.ESCAPE).perform();
-        wait.until(ExpectedConditions.invisibilityOf(advertisementModal));
+        wait.until(ExpectedConditions.invisibilityOf(discountOfferModal));
     }
 }
